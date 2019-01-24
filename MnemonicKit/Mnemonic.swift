@@ -4,18 +4,19 @@ import CryptoSwift
 import Foundation
 import Security
 
-public enum MnemonicLanguageType {
-  case english
-  case chinese
+public enum MnemonicLanguage {
 
-  func words() -> [String] {
-    switch self {
-    case .english:
-      return String.englishMnemonics
-    case .chinese:
-      return String.chineseMnemonics
-    }
-  }
+	case english
+	case chinese
+	
+	public var words: [String] {
+		switch self {
+		case .english:
+			return String.englishMnemonics
+		case .chinese:
+			return String.chineseMnemonics
+		}
+	}
 }
 
 public class Mnemonic {
@@ -26,7 +27,7 @@ public class Mnemonic {
    * Parameter language: The language to use. Default is english.
    */
   public static func mnemonicString(from hexString: String,
-                                    language: MnemonicLanguageType = .english) -> String? {
+                                    language: MnemonicLanguage = .english) -> String? {
     let seedData = hexString.mnemonicData()
     let hashData = seedData.sha256()
     let checkSum = hashData.toBitArray()
@@ -36,7 +37,7 @@ public class Mnemonic {
       seedBits.append(checkSum[i])
     }
 
-    let words = language.words()
+    let words = language.words
 
     let mnemonicCount = seedBits.count / 11
     var mnemonic = [String]()
@@ -61,7 +62,7 @@ public class Mnemonic {
    */
   public static func deterministicSeedString(from mnemonic: String,
                                              passphrase: String = "",
-                                             language _: MnemonicLanguageType = .english) -> String? {
+                                             language _: MnemonicLanguage = .english) -> String? {
     guard let normalizedData = self.normalized(string: mnemonic),
       let saltData = normalized(string: "mnemonic" + passphrase) else {
       return nil
@@ -86,7 +87,7 @@ public class Mnemonic {
    * Parameter strength: The strength to use. This must be a multiple of 32.
    * Parameter language: The language to use. Default is english.
    */
-  public static func generateMnemonic(strength: Int, language: MnemonicLanguageType = .english)
+  public static func generateMnemonic(strength: Int, language: MnemonicLanguage = .english)
     -> String? {
     guard strength % 32 == 0 else {
       return nil
