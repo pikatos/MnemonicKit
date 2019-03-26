@@ -98,7 +98,7 @@ public class Mnemonic {
     guard SecRandomCopyBytes(kSecRandomDefault, count, UnsafeMutablePointer<UInt8>(mutating: bytes)) != -1 else {
       return nil
     }
-    let data = Data(bytes: bytes)
+    let data = Data(bytes)
     let hexString = data.toHexString()
 
     return mnemonicString(from: hexString, language: language)
