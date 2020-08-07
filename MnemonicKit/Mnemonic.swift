@@ -90,17 +90,19 @@ public class Mnemonic {
 	public static func generateMnemonic(strength: Int, language: MnemonicLanguage = .english)
 		-> String? {
 			guard strength % 32 == 0 else {
-				return nil
+			  return nil
 			}
-			
+
+			// Securely generate random bytes.
+			// See: https://developer.apple.com/documentation/security/1399291-secrandomcopybytes
 			let count = strength / 8
 			var bytes = [UInt8](repeating: 0, count: count)
-			if withUnsafeMutablePointer(to: &bytes, { SecRandomCopyBytes(kSecRandomDefault, count, $0) }) == -1 {
-				return nil
+			let status = SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes)
+			guard status == errSecSuccess else {
+			  return nil
 			}
-			let data = Data(bytes)
-			let hexString = data.toHexString()
-			
+
+			let hexString = bytes.toHexString()
 			return mnemonicString(from: hexString, language: language)
 	}
 	
